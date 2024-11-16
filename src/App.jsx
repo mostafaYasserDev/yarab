@@ -1,17 +1,21 @@
-import "./App.css";
-import Home from "./pages/Home.jsx";
-import GameList from "./components/GameList.jsx";
-import Footer from "./components/Footer.jsx";
-import GamePrice from "./components/GamePrice.jsx";
-import AboutGames from "./pages/AboutGames.jsx";
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { CurrencyProvider } from "./context/CurrencyContext";
+import HomePage from "./pages/HomePage";
+import SettingsPage from "./pages/SettingsPage";
+import LoginPage from "./pages/LoginPage";
+
 function App() {
   return (
-    <>
-      <Home />
-      <GameList typeGames="New Releases" />
-      <GameList typeGames="Best Sellers" />
-      <Footer />
-    </>
+    <CurrencyProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/login" element={<LoginPage />} />
+        </Routes>
+      </Router>
+    </CurrencyProvider>
   );
 }
 
