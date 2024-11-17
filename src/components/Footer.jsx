@@ -1,19 +1,34 @@
-import logo from "../assets/images/logo.png";
+import React, { useState, useEffect } from "react";
+import { getData } from "../services/api";
 
 const Footer = () => {
+  const [footerData, setFooterData] = useState(null);
+
+  useEffect(() => {
+    getData("/footer-data")
+      .then((data) => setFooterData(data))
+      .catch((error) => console.error("Error fetching footer data:", error));
+  }, []);
+
+  if (!footerData) {
+    return <footer>Loading...</footer>; // عرض رساله تحميل أثناء جلب البيانات
+  }
+
   return (
     <footer>
       <div className="footer-content">
         <div className="footer-brand">
-          <img src={logo} alt="logo" className="logo" />
-          <p>Find the best deals on your favorite games, all in one place.</p>
+          <img src={footerData.logo} alt="logo" className="logo" />
+          <p>{footerData.brandDescription}</p>
         </div>
         <div className="footer-links">
           <h4>Quick Links</h4>
           <ul>
-            <li>Home</li>
-            <li>Games</li>
-            <li>About Games</li>
+            {footerData.quickLinks.map((link, index) => (
+              <li key={index}>
+                <a href={link.url}>{link.name}</a>
+              </li>
+            ))}
           </ul>
         </div>
         <div className="footer-subscribe">
@@ -21,7 +36,7 @@ const Footer = () => {
           <form>
             <input
               type="email"
-              placeholder="Get Games updates"
+              placeholder={footerData.subscribePlaceholder}
               aria-label="Enter your email"
             />
             <button type="submit">➜</button>
@@ -30,17 +45,13 @@ const Footer = () => {
       </div>
       <div className="footer-bottom">
         <div className="social-icons">
-          <a href="#" aria-label="LinkedIn">
-            <i className="fab fa-linkedin"></i>
-          </a>
-          <a href="#" aria-label="Facebook">
-            <i className="fab fa-facebook"></i>
-          </a>
-          <a href="#" aria-label="Twitter">
-            <i className="fab fa-twitter"></i>
-          </a>
+          {footerData.socialLinks.map((social, index) => (
+            <a key={index} href={social.url} aria-label={social.name}>
+              <i className={`fab fa-${social.name.toLowerCase()}`}></i>
+            </a>
+          ))}
         </div>
-        <p>© 2024 Made by mostafaYasserDev</p>
+        <p>{footerData.footerText}</p>
       </div>
     </footer>
   );

@@ -1,21 +1,29 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { CurrencyProvider } from "./context/CurrencyContext";
-import HomePage from "./pages/HomePage";
-import SettingsPage from "./pages/SettingsPage";
-import LoginPage from "./pages/LoginPage";
-
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import Home from "./pages/Home"; // أو المسار الذي يحتوي على الصفحة الرئيسية
+import AboutGames from "./pages/AboutGames"; // المسار لصفحة About Games
+import GamePrice from "./pages/GamePrice"; // المسار لصفحة GamePage
+import AdminDashboard from "./pages/AdminDashboard"; // المسار لصفحة لوحة التحكم
+import "./App.css";
 function App() {
   return (
-    <CurrencyProvider>
-      <Router>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/settings" element={<SettingsPage />} />
-          <Route path="/login" element={<LoginPage />} />
-        </Routes>
-      </Router>
-    </CurrencyProvider>
+    <Router>
+      <div>
+        <Switch>
+          {/* صفحة Home */}
+          <Route exact path="/" component={Home} />
+
+          {/* صفحة About Games */}
+          <Route path="/about-games" component={AboutGames} />
+
+          {/* صفحة GamePage */}
+          <Route path="/game/:id" component={GamePrice} />
+
+          {/* صفحة لوحة التحكم */}
+          <Route path="/admin" component={AdminDashboard} />
+        </Switch>
+      </div>
+    </Router>
   );
 }
 

@@ -1,62 +1,56 @@
+import React, { useEffect, useState } from "react";
+import { fetchData } from "../services/api";
+
 const AboutGame = () => {
+  const [gameDetails, setGameDetails] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const loadGameDetails = async () => {
+      try {
+        setLoading(true);
+        const data = await fetchData("about-game");
+        setGameDetails(data);
+      } catch (err) {
+        setError("Failed to load game details");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadGameDetails();
+  }, []);
+
+  if (loading) return <p>Loading game details...</p>;
+  if (error) return <p>{error}</p>;
+
   return (
     <div className="about-container">
       <div className="container">
-        <h1 className="title">About “Aliens: Dark Descent”</h1>
-        <p className="description">
-          Aliens: Dark Descent is an intense real-time strategy game where you
-          lead a squad of marines against the terrifying Xenomorph threat. Set
-          in the iconic Aliens universe, the game blends tactical
-          decision-making and horror, challenging your leadership as you
-          navigate dangerous environments and fight for survival.
-        </p>
+        <h1 className="title">About “{gameDetails.title}”</h1>
+        <p className="description">{gameDetails.description}</p>
         <div className="details">
           <div className="detail-item">
-            <strong>Game Type:</strong> Action, Strategy, Horror
+            <strong>Game Type:</strong> {gameDetails.type}
           </div>
           <div className="detail-item">
-            <strong>Features:</strong> Single-player
+            <strong>Features:</strong> {gameDetails.features.join(", ")}
           </div>
         </div>
-        <h2 className="subtitle">Aliens: Dark Descent</h2>
-        <p className="description">
-          Aliens: Dark Descent includes the story mode and single-player
-          gameplay. The game focuses on intense strategy exploration where you
-          lead a squad of marines against the Xenomorphs!
-        </p>
-        <p className="description">
-          Set in the iconic Aliens universe, players must tackle tactical
-          decisions while facing growing enemies. As the commander, you must
-          keep your team alive and accomplish objectives against growing waves.
-        </p>
-        <p className="description">
-          Hyper-visceral thrilling atmospheres in Aliens: Dark Descent, where
-          you must survive against deadly Xenomorphs while exploring the edges
-          of space and secrets. You can engage in threats and uncover the
-          surrounding world in an immersive experience that blends action and
-          horror.
-        </p>
+        <h2 className="subtitle">{gameDetails.subtitle}</h2>
+        <p className="description">{gameDetails.story}</p>
+        <p className="description">{gameDetails.gameplay}</p>
+        <p className="description">{gameDetails.atmosphere}</p>
         <div className="images">
-          <img
-            src="https://images.unsplash.com/photo-1731410612759-d93cede4edbc?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw0fHx8ZW58MHx8fHx8"
-            alt="Game Screenshot 1"
-            className="screenshot"
-          />
-          <img
-            src="https://images.unsplash.com/photo-1731410612759-d93cede4edbc?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw0fHx8ZW58MHx8fHx8"
-            alt="Game Screenshot 2"
-            className="screenshot"
-          />
-          <img
-            src="https://images.unsplash.com/photo-1731410612759-d93cede4edbc?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw0fHx8ZW58MHx8fHx8"
-            alt="Game Screenshot 3"
-            className="screenshot"
-          />
-          <img
-            src="https://images.unsplash.com/photo-1731410612759-d93cede4edbc?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw0fHx8ZW58MHx8fHx8"
-            alt="Game Screenshot 4"
-            className="screenshot"
-          />
+          {gameDetails.screenshots.map((screenshot, index) => (
+            <img
+              key={index}
+              src={screenshot}
+              alt={`Game Screenshot ${index + 1}`}
+              className="screenshot"
+            />
+          ))}
         </div>
       </div>
     </div>

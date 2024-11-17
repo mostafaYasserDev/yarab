@@ -1,7 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { getData } from "../services/api"; // تأكد من استيراد دالة getData من ملف api.js
 
-const GameHeader = ({ title, media }) => {
-  const [currentMedia, setCurrentMedia] = useState(media[0]);
+const GameHeader = ({ gameId }) => {
+  const [gameData, setGameData] = useState(null);
+  const [currentMedia, setCurrentMedia] = useState(null);
+
+  useEffect(() => {
+    // جلب بيانات اللعبة من الـ API باستخدام gameId
+    getData(`/games/${gameId}`)
+      .then((data) => {
+        setGameData(data);
+        setCurrentMedia(data.media[0]); // تعيين الوسيط الأول كـ default
+      })
+      .catch((error) => console.error("Error fetching game data:", error));
+  }, [gameId]);
+
+  // إذا كانت البيانات غير موجودة بعد التحميل
+  if (!gameData) {
+    return <div>Loading...</div>;
+  }
+
+  const { title, media } = gameData;
 
   const renderMedia = (item) => {
     if (item.type === "image") {
@@ -38,7 +57,7 @@ const GameHeader = ({ title, media }) => {
             {item.type === "image" ? (
               <img src={item.src} alt={`${title} thumbnail ${index}`} />
             ) : (
-              <div className="video-icon">🎥</div>
+              <div className="video-icon">⯈</div>
             )}
           </div>
         ))}

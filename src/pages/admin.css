@@ -1,0 +1,50 @@
+.dashboard-container {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  text-align: center;
+}
+
+.section {
+  margin: 20px 0;
+}
+
+section h2 {
+  color: #333;
+}
+
+input,
+button {
+  padding: 10px;
+  margin: 5px 0;
+  width: 100%;
+  max-width: 400px;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+ul li {
+  padding: 10px;
+  border: 1px solid #ddd;
+  margin: 5px 0;
+}
+
+button {
+  cursor: pointer;
+  background-color: red;
+  color: white;
+  border: none;
+}
+
+button:hover {
+  background-color: darkred;
+}
+
+button:active {
+  transform: scale(0.98);
+}

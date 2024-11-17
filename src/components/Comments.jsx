@@ -1,31 +1,54 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { fetchData, postData, patchData } from "../services/api";
 
 const Comments = () => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [likes, setLikes] = useState({});
 
-  // Handle new comment addition
-  const handleAddComment = () => {
+  useEffect(() => {
+    const loadComments = async () => {
+      const data = await fetchData("comments"); // جلب التعليقات من الـ API
+      if (data) setComments(data);
+    };
+
+    loadComments();
+  }, []);
+
+  // إضافة تعليق جديد
+  const handleAddComment = async () => {
     if (newComment.trim()) {
-      setComments([
-        { id: Date.now(), text: newComment, likes: 0, replies: [] },
-        ...comments,
-      ]);
-      setNewComment("");
+      const newCommentData = {
+        text: newComment,
+        author: "Anonymous", // يمكنك إضافة طريقة لجلب اسم الكاتب
+        likes: 0,
+        dislikes: 0, // إضافة ديسلايك افتراضي
+        replies: [],
+      };
+
+      const addedComment = await postData("comments", newCommentData); // إرسال التعليق إلى API
+      if (addedComment) {
+        setComments([addedComment, ...comments]);
+        setNewComment("");
+      }
     }
   };
 
-  // Handle like action
-  const handleLike = (id) => {
-    setComments((prevComments) =>
-      prevComments.map((comment) =>
-        comment.id === id ? { ...comment, likes: comment.likes + 1 } : comment
-      )
-    );
+  // إضافة ديسلايك
+  const handleDislike = async (id) => {
+    const updatedComment = await patchData(`comments/${id}/dislike`); // تحديث التعليق في الـ API لإضافة ديسلايك
+    if (updatedComment) {
+      setComments((prevComments) =>
+        prevComments.map((comment) =>
+          comment.id === id
+            ? { ...comment, dislikes: comment.dislikes + 1 }
+            : comment
+        )
+      );
+    }
   };
 
-  // Handle reply action
+  // الرد على تعليق
   const handleReply = (id, replyText) => {
     setComments((prevComments) =>
       prevComments.map((comment) =>
@@ -57,9 +80,14 @@ const Comments = () => {
         {comments.map((comment) => (
           <div key={comment.id} className="comment-item">
             <p>{comment.text}</p>
+            <p>
+              <strong>By: </strong>
+              {comment.author}
+            </p>
             <div className="comment-actions">
-              <span onClick={() => handleLike(comment.id)}>
-                👍 {comment.likes}
+              <span>👍 {comment.likes}</span>
+              <span onClick={() => handleDislike(comment.id)}>
+                👎 {comment.dislikes}
               </span>
               <span
                 onClick={() =>

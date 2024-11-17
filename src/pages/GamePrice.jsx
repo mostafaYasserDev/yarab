@@ -1,20 +1,28 @@
 import React, { useState, useEffect } from "react";
 import Header from "../components/Header";
 import GameHeader from "../components/GameHeader";
-import AboutGame from "../components/AboutGame";
+import PriceTable from "../components/PriceTable";
+import FooterNote from "../components/FooterNote";
 import Footer from "../components/Footer";
+import Comments from "../components/Comments";
 import { getGameById } from "../services/api"; // استيراد الدالة من ملف api.js
 
-function AboutGames() {
+const GamePage = () => {
   const [game, setGame] = useState(null);
+  const [prices, setPrices] = useState([]);
+  const [warning, setWarning] = useState("");
+  const [buttonText, setButtonText] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const gameId = "123"; // معرّف اللعبة
-    getGameById(gameId) // استخدام دالة الـ API لجلب بيانات اللعبة
+    getGameById(gameId) // استخدام الدالة لجلب بيانات اللعبة
       .then((data) => {
         setGame(data); // تعيين بيانات اللعبة في حالة النجاح
+        setPrices(data.prices); // تعيين أسعار اللعبة
+        setWarning(data.warning); // تعيين التحذير
+        setButtonText(data.buttonText); // تعيين نص الزر
         setLoading(false);
       })
       .catch((err) => {
@@ -36,19 +44,15 @@ function AboutGames() {
   }
 
   return (
-    <>
+    <div>
       <Header />
       <GameHeader title={game.title} media={game.media} />
-      <AboutGame
-        title={game.title}
-        description={game.description}
-        releaseDate={game.releaseDate}
-        category={game.category}
-        platforms={game.platforms}
-      />
+      <PriceTable prices={prices} />
+      {warning && <FooterNote warning={warning} buttonText={buttonText} />}
+      <Comments />
       <Footer />
-    </>
+    </div>
   );
-}
+};
 
-export default AboutGames;
+export default GamePage;
